@@ -27,7 +27,7 @@ class CartService:
         return cart_data
 
 
-    def update_cart_data(self, cart_data: Dict[int, int], item: CartItemUpdate) -> Dict[int, int]:
+    def update_cart_item(self, cart_data: Dict[int, int], item: CartItemUpdate) -> Dict[int, int]:
         if item.product_id not in cart_data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
