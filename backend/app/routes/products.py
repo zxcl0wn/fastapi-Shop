@@ -7,7 +7,7 @@ from ..schemas.products import ProductResponse, ProductListResponse
 
 
 router = APIRouter(
-    prefix="/products",
+    prefix="/api/products",
     tags=["products"]
 )
 

@@ -1,5 +1,3 @@
-from encodings.rot_13 import rot13
-
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import Dict
@@ -8,9 +6,8 @@ from ..services.cart_service import CartService
 from ..schemas.cart import CartItemCreate, CartItemUpdate, CartResponse
 from pydantic import BaseModel
 
-
 router = APIRouter(
-    prefix="/cart",
+    prefix="/api/cart",
     tags=["cart"]
 )
 
@@ -27,21 +24,17 @@ class UpdateCartRequest(BaseModel):
 class RemoveFromCartRequest(BaseModel):
     cart: Dict[int, int] = {}
 
-
-@router.post("/", status_code=status.HTTP_200_OK)
+@router.post("/add", status_code=status.HTTP_200_OK)
 def add_to_cart(request: AddToCartRequest, db: Session = Depends(get_db)):
     service = CartService(db)
-    item = CartItemCreate(
-        product_id=request.product_id,
-        quantity=request.quantity
-    )
-    updated_cart = service.add_to_cart(item)
-    return {'cart': updated_cart}
+    item = CartItemCreate(product_id=request.product_id, quantity=request.quantity)
+    updated_cart = service.add_to_cart(request.cart, item)
+    return {"cart": updated_cart}
 
-@router.post("/", response_model=CartResponse, status_code=status.HTTP_200_OK)
-def get_cart(card_data: Dict[int, int], db: Session = Depends(get_db)):
+@router.post("", response_model=CartResponse, status_code=status.HTTP_200_OK)
+def get_cart(cart_data: Dict[int, int], db: Session = Depends(get_db)):
     service = CartService(db)
-    return service.get_cart_details(card_data)
+    return service.get_cart_details(cart_data)
 
 @router.put("/update", status_code=status.HTTP_200_OK)
 def update_cart_item(request: UpdateCartRequest, db: Session = Depends(get_db)):
